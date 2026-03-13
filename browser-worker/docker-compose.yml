@@ -1,0 +1,40 @@
+services:
+  discord-browser-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: discord-browser-worker
+    restart: unless-stopped
+    cpus: 4
+    cpuset: "0-3"
+    mem_limit: "8g"
+    shm_size: "1gb"
+    ports:
+      - "6086:6080"
+      - "8096:8096"
+    environment:
+      DISPLAY: "${DISPLAY:-:99}"
+      XVFB_WHD: "${XVFB_WHD:-1600x900x24}"
+      NOVNC_PORT: "${NOVNC_PORT:-6080}"
+      VNC_PORT: "${VNC_PORT:-5900}"
+      PROFILE_DIR: "${PROFILE_DIR:-/data/profile}"
+      REMOTE_DEBUGGING_PORT: "${REMOTE_DEBUGGING_PORT:-9222}"
+      START_URL: "${START_URL:-https://discord.com/app}"
+      SECONDARY_URLS: "${SECONDARY_URLS:-https://rumble.com/c/ghostpolitics/livestreams?e9s=src_v1_cbl}"
+      BROADCAST_URL: "${BROADCAST_URL:-https://www.youtube.com/}"
+      TARGET_URL: "${TARGET_URL:-https://discord.com/app}"
+      TAB_CAPTURE_TITLE_HINT: "${TAB_CAPTURE_TITLE_HINT:-Franklin Media Share}"
+      RUNNER_MODE: "${RUNNER_MODE:-browser-daemon}"
+      MANUAL_HOLD_SECONDS: "${MANUAL_HOLD_SECONDS:-7200}"
+      POST_LOGIN_WAIT_SECONDS: "${POST_LOGIN_WAIT_SECONDS:-20}"
+      CONTROL_PORT: "${CONTROL_PORT:-8096}"
+      LIBVA_DRIVER_NAME: "${LIBVA_DRIVER_NAME:-radeonsi}"
+      MESA_LOADER_DRIVER_OVERRIDE: "${MESA_LOADER_DRIVER_OVERRIDE:-radeonsi}"
+    volumes:
+      - ./data/profile:/data/profile
+      - ./data/logs:/app/logs
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+    group_add:
+      - "993"
+      - "44"

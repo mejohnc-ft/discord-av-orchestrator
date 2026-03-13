@@ -1,0 +1,23 @@
+services:
+  discord-bot:
+    build:
+      context: ./franklin-bot
+      dockerfile: Dockerfile
+    container_name: discord-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - VLLM_BASE_URL=${VLLM_BASE_URL}
+      - STT_BASE_URL=${STT_BASE_URL}
+      - TTS_BASE_URL=${TTS_BASE_URL}
+      - MODEL_NAME=${MODEL_NAME}
+      - TTS_VOICE=${TTS_VOICE}
+      - STT_MODEL=${STT_MODEL}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # The browser worker is intentionally kept in its own compose project.
+  # Start it from browser-worker/docker-compose.yml so its persisted profile
+  # and noVNC ports stay isolated from the rest of the service stack.
